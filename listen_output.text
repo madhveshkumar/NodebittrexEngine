@@ -1,0 +1,43 @@
+{ MarketName: 'USDT-XVG',
+  High: 0.05795645,
+  Low: 0.0460029,
+  Volume: 60402561.39543334,
+  Last: 0.05289965,
+  BaseVolume: 3124649.07718353,
+  TimeStamp: '2018-02-08T04:33:02.937',
+  Bid: 0.05250021,
+  Ask: 0.0528996,
+  OpenBuyOrders: 674,
+  OpenSellOrders: 4551,
+  PrevDay: 0.04626409,
+  Created: '2017-12-29T19:29:18.357' }
+
+  { MarketName: 'BTC-BTG',
+  Nounce: 1917704,
+  Buys: [ { Type: 1, Rate: 0.01170025, Quantity: 0 } ],
+  Sells: [ { Type: 2, Rate: 0.01180099, Quantity: 0.33760286 } ],
+  Fills: 
+   [ { OrderType: 'BUY',
+       Rate: 0.01180099,
+       Quantity: 0.09351122,
+       TimeStamp: '2018-02-08T04:34:06.47' } ] }
+
+
+
+SELECT
+  FROM_UNIXTIME(FLOOR((UNIX_TIMESTAMP(LAST_UPD_TS))/3600)*3600) AS datetime,
+  SUBSTRING_INDEX(
+        GROUP_CONCAT(CAST(LAST_VALUE AS CHAR) ORDER BY LAST_UPD_TS),
+        ',',
+        1
+    ) AS open,
+    MIN(LOW) AS low,
+    MAX(HIGH) AS high,
+  SUBSTRING_INDEX(
+        GROUP_CONCAT(CAST(LAST_VALUE AS CHAR) ORDER BY LAST_UPD_TS DESC),
+        ',',
+        1
+    ) AS close,
+  SUM(VOLUME) AS Volume,SUM(BASE_VOLUME) AS BV
+from ticker where MRKT_NAME ='USDT-BTC' GROUP BY datetime
+        
